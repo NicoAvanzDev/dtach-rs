@@ -155,7 +155,7 @@ fn read_session_output(mut stream: TcpStream, running: Arc<AtomicBool>, detached
             Ok(0) => {
                 crate::trace::event("attach: output socket EOF");
                 if !detached.load(Ordering::SeqCst) {
-                    let _ = write!(stdout, "{EOS}\r\n[EOF - dtach-rs terminating]\r\n");
+                    let _ = write!(stdout, "{EOS}\r\n[EOF - dtach terminating]\r\n");
                     let _ = stdout.flush();
                 }
                 running.store(false, Ordering::SeqCst);
@@ -281,9 +281,7 @@ fn handle_input_bytes(
             .lock()
             .expect("poisoned mutex")
             .shutdown(Shutdown::Both);
-        // Clear the screen so the user is not left looking at stale output
-        // from the child program after detaching.
-        print!("\x1b[H\x1b[2J[detached]\r\n");
+        print!("{EOS}\r\n[detached]\r\n");
         let _ = io::stdout().flush();
         return false;
     }
