@@ -98,15 +98,25 @@ jobs:
           WINGET_CREATE_GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
         run: |
           if (-not $env:WINGET_CREATE_GITHUB_TOKEN) {
-            throw "WINGET_TOKEN repository secret is not set"
+            Write-Warning "WINGET_TOKEN repository secret is not set; skipping WinGet submission."
+            exit 0
           }
 
+          $packageId = 'nicoavanzdev.dtach-rs'
           $version = '${{ github.ref_name }}' -replace '^v', ''
           $url = "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dtach-rs-x86_64-pc-windows-msvc.zip"
+          $manifestApi = 'https://api.github.com/repos/microsoft/winget-pkgs/contents/manifests/n/nicoavanzdev/dtach-rs'
+
+          try {
+            Invoke-RestMethod -Uri $manifestApi -Headers @{ 'User-Agent' = 'github-actions' } -ErrorAction Stop | Out-Null
+          } catch {
+            Write-Warning "Package $packageId is not in winget-pkgs yet; skipping automatic WinGet update for this release."
+            exit 0
+          }
 
           curl.exe -JLO https://aka.ms/wingetcreate/latest
-          .\wingetcreate.exe update --submit --version $version --urls "$url|x64" nicoavanzdev.dtach-rs
+          .\wingetcreate.exe update $packageId --submit --version $version --urls "$url|x64"
 
           if ($LASTEXITCODE -ne 0) {
-            throw "WinGet update failed. If this is the first release, submit the initial manifest to winget-pkgs first."
+            throw "WinGet update failed."
           }
