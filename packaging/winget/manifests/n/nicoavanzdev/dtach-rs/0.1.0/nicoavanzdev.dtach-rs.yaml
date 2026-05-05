@@ -1,14 +1,15 @@
-# Initial WinGet manifest — submit manually after the first release:
+# Initial WinGet manifest - submit manually after the first release:
 #   1. Fill in InstallerSha256 below (sha256sum of the .zip)
 #   2. Submit to https://github.com/microsoft/winget-pkgs
-#   3. Future releases are auto-submitted by .github/workflows/winget.yml
+#   3. Future releases are auto-submitted by .github/workflows/release.yml
 
 PackageIdentifier: nicoavanzdev.dtach-rs
 PackageVersion: 0.1.0
 PackageName: dtach-rs
 Publisher: Nicolo Avanzini
 License: MIT
-ShortDescription: A cross-platform Rust clone of dtach — detachable terminal sessions
+PackageLocale: en-US
+ShortDescription: A cross-platform Rust clone of dtach for detachable terminal sessions
 Moniker: dtach-rs
 Tags:
   - terminal
@@ -17,10 +18,14 @@ Tags:
   - session
 Installers:
   - Architecture: x64
-    InstallerType: portable
+    InstallerType: zip
     InstallerUrl: https://github.com/nicoavanzdev/dtach-rs/releases/download/v0.1.0/dtach-rs-x86_64-pc-windows-msvc.zip
     InstallerSha256: <FILL_IN_AFTER_RELEASE>
+    NestedInstallerType: portable
+    NestedInstallerFiles:
+      - RelativeFilePath: dtach-rs.exe
+        PortableCommandAlias: dtach-rs
     Commands:
       - dtach-rs
 ManifestType: singleton
-ManifestVersion: 1.9.0
+ManifestVersion: 1.12.0

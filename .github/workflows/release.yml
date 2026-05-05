@@ -35,6 +35,12 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
 
+      - name: Configure Linux arm64 linker
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: |
+          echo "CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+          echo "CC_aarch64_unknown_linux_gnu=aarch64-linux-gnu-gcc" >> "$GITHUB_ENV"
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -82,3 +88,25 @@ jobs:
         with:
           files: dist/*
           generate_release_notes: true
+
+  winget:
+    needs: release
+    runs-on: windows-latest
+    steps:
+      - name: Submit manifest to winget-pkgs
+        env:
+          WINGET_CREATE_GITHUB_TOKEN: ${{ secrets.WINGET_TOKEN }}
+        run: |
+          if (-not $env:WINGET_CREATE_GITHUB_TOKEN) {
+            throw "WINGET_TOKEN repository secret is not set"
+          }
+
+          $version = '${{ github.ref_name }}' -replace '^v', ''
+          $url = "https://github.com/${{ github.repository }}/releases/download/${{ github.ref_name }}/dtach-rs-x86_64-pc-windows-msvc.zip"
+
+          curl.exe -JLO https://aka.ms/wingetcreate/latest
+          .\wingetcreate.exe update --submit --version $version --urls "$url|x64" nicoavanzdev.dtach-rs
+
+          if ($LASTEXITCODE -ne 0) {
+            throw "WinGet update failed. If this is the first release, submit the initial manifest to winget-pkgs first."
+          }

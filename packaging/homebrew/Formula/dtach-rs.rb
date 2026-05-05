@@ -1,5 +1,5 @@
 class DtachRs < Formula
-  desc "A cross-platform Rust clone of dtach — detachable terminal sessions"
+  desc "Cross-platform Rust clone of dtach for detachable terminal sessions"
   homepage "https://github.com/nicoavanzdev/dtach-rs"
   license "MIT"
   version "0.1.0"
