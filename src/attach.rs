@@ -38,22 +38,7 @@ impl Drop for RawTerminal {
 
 fn restore_terminal_modes() {
     let _ = disable_raw_mode();
-    print!(concat!(
-        "\x1b[0m",
-        "\x1b[?25h",
-        "\x1b[?9001l",
-        "\x1b[?1000l",
-        "\x1b[?1002l",
-        "\x1b[?1003l",
-        "\x1b[?1004l",
-        "\x1b[?1005l",
-        "\x1b[?1006l",
-        "\x1b[?1015l",
-        "\x1b[?2004l",
-        "\x1b[?1049l",
-        "\x1b[?1047l",
-        "\x1b[?47l"
-    ));
+    print!("\x1b[?25h");
     let _ = io::stdout().flush();
 }
 
