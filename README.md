@@ -4,6 +4,31 @@ A small Rust clone of [`dtach`](https://github.com/crigler/dtach): it runs one
 program under a pseudo-terminal, lets terminals attach and detach from it, and
 keeps the program alive after the original terminal goes away.
 
+## Installation
+
+### Pre-built binaries
+
+Download the latest binary for your platform from the
+[GitHub Releases](https://github.com/nicoavanzdev/dtach-rs/releases) page.
+
+### Windows (WinGet)
+
+```powershell
+winget install nicoavanzdev.dtach-rs
+```
+
+### macOS / Linux (Homebrew)
+
+```sh
+brew install nicoavanzdev/tap/dtach-rs
+```
+
+### From source (cargo)
+
+```sh
+cargo install --git https://github.com/nicoavanzdev/dtach-rs
+```
+
 This implementation keeps the upstream `dtach` command-line shape:
 
 ```text
